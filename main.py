@@ -12,11 +12,13 @@ def room_center(room):
     return (x + w // 2, y + h // 2)
 
 
-def intersects(a, b):
+def is_intersect(a, b):
     """部屋 a と部屋 b が重なっているか判定する"""
     ax, ay, aw, ah = a
     bx, by, bw, bh = b
-    return not (ax + aw <= bx or bx + bw <= ax or ay + ah <= by or by + bh <= ay)
+    return not (
+        (ax + aw <= bx) or (bx + bw <= ax) or (ay + ah <= by) or (by + bh <= ay)
+    )
 
 
 def carve_room(m, room):
@@ -24,7 +26,7 @@ def carve_room(m, room):
     x, y, w, h = room
     return [
         [
-            ("." if (x <= ix < x + w and y <= iy < y + h) else m[iy][ix])
+            ("." if ((x <= ix < x + w) and (y <= iy < y + h)) else m[iy][ix])
             for ix in range(len(m[0]))
         ]
         for iy in range(len(m))
@@ -56,7 +58,7 @@ def place_rooms(width, height, max_rooms=30, room_min=5, room_max=12, max_tries=
         w, h = randrange(room_min, room_max + 1), randrange(room_min, room_max + 1)
         x, y = randrange(1, width - w - 1), randrange(1, height - h - 1)
         new_room = make_room(x, y, w, h)
-        if all(not intersects(new_room, other) for other in rooms):
+        if all(not is_intersect(new_room, other) for other in rooms):
             m = carve_room(m, new_room)
             if rooms:
                 prev_cx, prev_cy = room_center(rooms[-1])
